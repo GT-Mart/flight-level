@@ -33,7 +33,7 @@ def build_date(filename):
     return datetime.datetime(sales_year, sales_month, sales_day)
 
 
-def save_to_database(filename, sales_date, db, col_map):
+def save_to_database(filename, sales_date, db, col_map, fields):
     global logger
     sql_table = f"sales_{sales_date.strftime('%Y%m%d')}"
 
@@ -47,7 +47,14 @@ def save_to_database(filename, sales_date, db, col_map):
         logger.info("Saving the data to database...")
         db.sql(f"DROP TABLE IF EXISTS {sql_table};")
 
-        db.sql(f"CREATE TABLE {sql_table} AS SELECT * FROM pre_data")
+        db.sql(
+            f"CREATE TABLE {sql_table} (product_id VARCHAR, package_qty DOUBLE, product_name VARCHAR, product_category VARCHAR, sales_qty BIGINT, product_price DOUBLE, sales_price DOUBLE, category_pct DOUBLE, day_pct DOUBLE, sales_date TIMESTAMP);"
+        )
+
+        db.sql(
+            f"INSERT INTO {sql_table}({','.join(fields)}) SELECT {','.join(fields)} FROM pre_data"
+        )
+
         logger.info(f"Data saved into the table {sql_table}...")
         return True
     except:
@@ -81,7 +88,7 @@ def run(config, job_name):
             if sales_date:
                 logger.info(f"Processing sales for date: {sales_date}")
                 data_saved = save_to_database(
-                    csvfilename, sales_date, con, config.COL_MAP
+                    csvfilename, sales_date, con, config.COL_MAP, config.TABLE_COLUMNS
                 )
                 if data_saved:
                     shutil.move(csvfilename, archivecsvfilename)
@@ -91,4 +98,7 @@ def run(config, job_name):
                     logger.error(f"File {csvfilename} was not saved into database.")
 
     if changes_in_database:
+        logger.info("Recreating the all_sales table...")
         create_all_sales_table(config.FIRST_YEAR, con, logger, config.TABLE_COLUMNS)
+
+    logger.info("Process finished.")

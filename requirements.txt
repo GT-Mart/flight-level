@@ -4,3 +4,4 @@ typer
 duckdb
 python-dotenv
 openpyxl
+pyarrow

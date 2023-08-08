@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import duckdb
+import traceback
 
 from .log import get_logger
 
@@ -31,8 +32,13 @@ def create_all_sales_table(first_year, db, logger, fields):
             create_table = f"""
           INSERT INTO all_sales({','.join(fields)}) {' UNION '.join(tables)}
         """
-        logger.info("Running statement...")
-        db.sql(create_table)
+
+        try:
+            logger.info("Running statement...")
+            logger.info(create_table)
+            db.sql(create_table)
+        except:
+            logger.error(traceback.format_exc())
         idx += 1
 
     logger.info("Table created.")

@@ -2,7 +2,13 @@ import logging
 import os
 from dotenv import load_dotenv
 
-from etl import exceltocsv_run, renamefiles_run, exceltodb_run, allsales_run
+from etl import (
+    exceltocsv_run,
+    renamefiles_run,
+    exceltodb_run,
+    allsales_run,
+    dbtoparquet_run,
+)
 
 
 load_dotenv()
@@ -36,6 +42,7 @@ JOBS = {
     "renamefiles": renamefiles_run,
     "exceltodb": exceltodb_run,
     "allsales": allsales_run,
+    "toparquet": dbtoparquet_run,
 }
 
 # LOG CONFIGURATION
@@ -45,6 +52,7 @@ LOG_LEVEL = logging.DEBUG
 
 # DATABASE CONFIGURATION
 DATABASE = os.getenv("SLDB_DATABASE")
+PARQUET = os.getenv("SLDB_PQT_FOLDER")
 
 # YEAR CONFIGURATION
 FIRST_YEAR = 2021
