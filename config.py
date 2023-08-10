@@ -8,6 +8,7 @@ from etl import (
     exceltodb_run,
     allsales_run,
     dbtoparquet_run,
+    loadproducts_run,
 )
 
 
@@ -43,6 +44,7 @@ JOBS = {
     "exceltodb": exceltodb_run,
     "allsales": allsales_run,
     "toparquet": dbtoparquet_run,
+    "loadproducts": loadproducts_run,
 }
 
 # LOG CONFIGURATION
@@ -56,3 +58,14 @@ PARQUET = os.getenv("SLDB_PQT_FOLDER")
 
 # YEAR CONFIGURATION
 FIRST_YEAR = 2021
+
+# PRODUCTS CONFIGURATION
+PROD_FOLDER = os.getenv("SLDB_PROD_FOLDER")
+PROD_COL_MAP = {
+    "Scan Code": "product_id",
+    "Item Name": "product_name",
+    "Department": "product_category",
+}
+PROD_RAW_TABLE = "raw_product"
+PROD_TABLE = "product"
+ALLSALES_COLUMNS = eval(os.getenv("SLDB_ALLSALES_TABLE_COLUMNS"))

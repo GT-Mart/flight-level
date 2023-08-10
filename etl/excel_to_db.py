@@ -7,7 +7,6 @@ import duckdb
 import traceback
 
 from .log import get_logger
-from .all_sales import create_all_sales_table
 
 logger = None
 
@@ -43,12 +42,23 @@ def save_to_database(filename, sales_date, db, col_map, fields):
         pre_data["sales_date"] = sales_date
         pre_data.rename(columns=col_map, inplace=True)
         pre_data.dropna(subset=["product_id"], inplace=True)
+        pre_data["product_id"] = pre_data["product_id"].astype(str)
+        pre_data["product_id"] = pre_data["product_id"].str.replace(".0", "")
+        pre_data.query(
+            "~product_id.str.contains('Total PLU')", engine="python", inplace=True
+        )
+
+        pre_data["product_id"] = pre_data["product_id"].apply(
+            lambda x: x[:-1] if len(x) == 11 or len(x) == 12 else x
+        )
+
+        pre_data["product_id"] = pre_data["product_id"].astype(int)
 
         logger.info("Saving the data to database...")
         db.sql(f"DROP TABLE IF EXISTS {sql_table};")
 
         db.sql(
-            f"CREATE TABLE {sql_table} (product_id VARCHAR, package_qty DOUBLE, product_name VARCHAR, product_category VARCHAR, sales_qty BIGINT, product_price DOUBLE, sales_price DOUBLE, category_pct DOUBLE, day_pct DOUBLE, sales_date TIMESTAMP);"
+            f"CREATE TABLE {sql_table} (product_id BIGINT, package_qty DOUBLE, product_name VARCHAR, product_category VARCHAR, sales_qty BIGINT, product_price DOUBLE, sales_price DOUBLE, category_pct DOUBLE, day_pct DOUBLE, sales_date TIMESTAMP);"
         )
 
         db.sql(
@@ -96,9 +106,5 @@ def run(config, job_name):
                     changes_in_database = True
                 else:
                     logger.error(f"File {csvfilename} was not saved into database.")
-
-    if changes_in_database:
-        logger.info("Recreating the all_sales table...")
-        create_all_sales_table(config.FIRST_YEAR, con, logger, config.TABLE_COLUMNS)
 
     logger.info("Process finished.")

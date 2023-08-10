@@ -19,7 +19,20 @@ def run(config, job_name):
 
     logger.info(f"Loading data...")
     df = con.query(
-        "select * from all_sales where product_id[1] in ('0','1','2','3','4','5','6','7','8','9')"
+        """select  a.product_id, 
+                   coalesce(p.product_name, a.product_name) as product_name,
+                   coalesce(p.product_category, a.product_category) as product_category,
+                   a.package_qty,
+                   a.sales_qty,
+                   a.product_price,
+                   a.sales_price,
+                   a.category_pct,
+                   a.day_pct,
+                   a.sales_date
+           from all_sales a left join product p on a.product_id = p.product_id
+        """
     ).to_df()
+    logger.info(f" Size of the data: {df.shape}")
+    logger.info(f"Saving data at: {config.PARQUET}")
     df.to_parquet(config.PARQUET)
     logger.info("Data dumped.")
