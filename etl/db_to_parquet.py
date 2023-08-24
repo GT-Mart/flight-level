@@ -17,7 +17,7 @@ def run(config, job_name):
     logger.info("Connecting to the database...")
     con = duckdb.connect(config.DATABASE)
 
-    logger.info(f"Loading data...")
+    logger.info(f"Loading sales data...")
     df = con.query(
         """select  a.product_id, 
                    coalesce(p.product_name, a.product_name) as product_name,
@@ -35,4 +35,14 @@ def run(config, job_name):
     logger.info(f" Size of the data: {df.shape}")
     logger.info(f"Saving data at: {config.PARQUET}")
     df.to_parquet(config.PARQUET)
+
+    logger.info(f"Loading fuel data...")
+    df2 = con.query(
+        """select  *
+           from all_fuel
+        """
+    ).to_df()
+    logger.info(f" Size of the data: {df2.shape}")
+    logger.info(f"Saving data at: {config.FUEL_PARQUET}")
+    df2.to_parquet(config.FUEL_PARQUET)
     logger.info("Data dumped.")

@@ -9,6 +9,7 @@ from etl import (
     allsales_run,
     dbtoparquet_run,
     loadproducts_run,
+    volumes_run,
 )
 
 
@@ -21,6 +22,15 @@ CSV_ARCHIVE_FOLDER = os.getenv("SLDB_CSV_ARCHIVE_FOLDER")
 EXCEL_EXTENSIONS = eval(os.getenv("SLDB_EXCEL_EXTENSIONS"))
 CSV_EXTENSIONS = eval(os.getenv("SLDB_CSV_EXTENSIONS"))
 EXCEL_SHEET = os.getenv("SLDB_EXCEL_SHEET")
+
+
+PDF_FOLDER = "data"
+PDF_ARCHIVE_FOLDER = "data/fuel_archive"
+PDF_EXTENSIONS = [".pdf"]
+PDF_REGEX = r"(\w+)\s(\$\s\S+)\s(\$\s\S+)\s(\$\s\S+)\s(\$\s\S+)\s(\$\s\S+)\s(\$\s\S+)\s(\$\s\S+)"
+PDF_PUMP_IDENTIFIER = "Dispenser"
+PDF_FUEL_TYPES = ["unleaded", "Premium", "Diesel"]
+
 
 # COLUMNS CONFIGURATION
 COL_MAP = {
@@ -35,7 +45,12 @@ COL_MAP = {
     "% of Total": "day_pct",
 }
 EXCEL_COLUMNS = eval(os.getenv("SLDB_EXCEL_COLUMNS"))
-TABLE_COLUMNS = eval(os.getenv("SLDB_TABLE_COLUMNS"))
+TABLE_COLUMNS = {
+    "sales": eval(os.getenv("SLDB_TABLE_COLUMNS")),
+    "fuel": "dispenser,sales_date,fuel_type,fuel_sales,fuel_sales_discount,fuel_sales_paid,fuel_volume".split(
+        ","
+    ),
+}
 
 # JOBS CONFIGURATION
 JOBS = {
@@ -45,6 +60,7 @@ JOBS = {
     "allsales": allsales_run,
     "toparquet": dbtoparquet_run,
     "loadproducts": loadproducts_run,
+    "volumes": volumes_run,
 }
 
 # LOG CONFIGURATION
@@ -55,6 +71,7 @@ LOG_LEVEL = logging.DEBUG
 # DATABASE CONFIGURATION
 DATABASE = os.getenv("SLDB_DATABASE")
 PARQUET = os.getenv("SLDB_PQT_FOLDER")
+FUEL_PARQUET = os.getenv("SLDB_FPQT_FOLDER")
 
 # YEAR CONFIGURATION
 FIRST_YEAR = 2021

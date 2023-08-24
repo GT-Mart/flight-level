@@ -3,6 +3,7 @@ import openpyxl
 import os
 import csv
 import shutil
+import datetime
 
 from .log import get_logger
 
@@ -57,6 +58,27 @@ def saveas(file_path, output_csv_path, archive_path, sheet_name=None, columns=No
             shutil.move(file_path, archive_path)
 
 
+def build_date(filename):
+    global logger
+    name_parts = filename.split("_")
+    if len(name_parts) >= 3:
+        sales_year = int(name_parts[0])
+        sales_day = int(name_parts[1])
+        sales_month = int(name_parts[2])
+
+        if sales_month > 12:
+            sales_day = int(name_parts[2])
+            sales_month = int(name_parts[1])
+
+        if sales_day > 31:
+            sales_day = int(name_parts[1][0:2])
+    else:
+        logger.info("filename is not formatted correctly")
+        return None
+
+    return datetime.datetime(sales_year, sales_month, sales_day)
+
+
 def run(config, job_name):
     global logger
     i = 0
@@ -67,9 +89,13 @@ def run(config, job_name):
         filename, ext = os.path.splitext(file)
         if ext in config.EXCEL_EXTENSIONS:
             logger.info(file)
+            sales_date = build_date(filename)
             saveas(
                 os.path.join(config.EXCEL_FOLDER, file),
-                os.path.join(config.EXCEL_FOLDER, filename + ".csv"),
+                os.path.join(
+                    config.EXCEL_FOLDER,
+                    f"{sales_date.year}_{sales_date.month}_{sales_date.day}_sales.csv",
+                ),
                 os.path.join(config.EXCEL_ARCHIVE_FOLDER, file),
                 columns=config.EXCEL_COLUMNS,
             )
