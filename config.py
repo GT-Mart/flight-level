@@ -10,6 +10,7 @@ from etl import (
     dbtoparquet_run,
     loadproducts_run,
     volumes_run,
+    tosplist_run,
 )
 
 
@@ -61,6 +62,7 @@ JOBS = {
     "toparquet": dbtoparquet_run,
     "loadproducts": loadproducts_run,
     "volumes": volumes_run,
+    "tosplist": tosplist_run,
 }
 
 # LOG CONFIGURATION
@@ -86,3 +88,13 @@ PROD_COL_MAP = {
 PROD_RAW_TABLE = "raw_product"
 PROD_TABLE = "product"
 ALLSALES_COLUMNS = eval(os.getenv("SLDB_ALLSALES_TABLE_COLUMNS"))
+
+
+SHAREPOINT_URL = "https://gtmart234.sharepoint.com"
+SHAREPOINT_SITE = "https://gtmart234.sharepoint.com/_layouts/15/sharepoint.aspx"  # "https://gtmart234-my.sharepoint.com/personal/walter_gtmart1_com"
+SHAREPOINT_LIST = "Sales Data"
+SHAREPOINT_USERNAME = "walter@gtmart1.com"
+SHAREPOINT_PASSWORD = os.getenv("SLDB_SHP_PWD")
+
+SHP_CLIENT_ID = "20eae9d3-be88-4424-847e-447b152918d7"
+SHP_CLIENT_SECRET = "CdsbEqpYZyCU4uiSopE4LShvXfWztymJwSHHKaKVggo="

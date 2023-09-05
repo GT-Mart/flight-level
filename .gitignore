@@ -167,6 +167,7 @@ cython_debug/
 *.xls
 *.csv
 *.duckdb
+*.ipynb
 
 # we also dont want the .DS Store file
 .DS_Store

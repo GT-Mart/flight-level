@@ -6,3 +6,5 @@ python-dotenv
 openpyxl
 pyarrow
 pdfplumber
+shareplum
+office365-rest-python-client
