@@ -34,7 +34,8 @@ def run(config, job_name):
     ).to_df()
     logger.info(f" Size of the data: {df.shape}")
     logger.info(f"Saving data at: {config.PARQUET}")
-    df.to_parquet(config.PARQUET)
+    # df.to_parquet(config.PARQUET)
+    df.to_csv(config.CSV)
 
     logger.info(f"Loading fuel data...")
     df2 = con.query(
@@ -44,5 +45,6 @@ def run(config, job_name):
     ).to_df()
     logger.info(f" Size of the data: {df2.shape}")
     logger.info(f"Saving data at: {config.FUEL_PARQUET}")
-    df2.to_parquet(config.FUEL_PARQUET)
+    # df2.to_parquet(config.FUEL_PARQUET)
+    df2.to_csv(config.FUEL_CSV)
     logger.info("Data dumped.")

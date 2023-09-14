@@ -2,96 +2,72 @@
 import sys
 import duckdb
 import pandas as pd
+import json
 
 from .log import get_logger
 
-# from shareplum.site import Version
-# from shareplum import Site, Office365
-from office365.runtime.auth.client_credential import ClientCredential
-from office365.sharepoint.client_context import ClientContext
-
+import requests
+from requests.auth import HTTPBasicAuth
+import pandas as pd
 
 logger = None
 
 
-def authenticate(sp_url, sp_site, user_name, password):
-    """
-    Takes a SharePoint url, site url, username and password to access the SharePoint site.
-    Returns a SharePoint Site instance if passing the authentication, returns None otherwise.
-    """
-    print(sp_url, sp_site, user_name, password)
-    site = None
-    try:
-        authcookie = Office365(
-            sp_url, username=user_name, password=password
-        ).GetCookies()
-        site = Site(
-            sp_site, version=Version.v365, authcookie=authcookie, verify_ssl=False
-        )
-    except:
-        # We should log the specific type of error occurred.
-        print("Failed to connect to SP site: {}".format(sys.exc_info()[1]))
-    return site
-
-
+# Your SharePoint site details
 def run(config, job_name):
-    global logger
-    i = 0
-    logger = get_logger(job_name, config)
+    site_url = "https://gtmart234.sharepoint.com"
+    list_name = "SalesData"
 
-    logger.info("Migrating data to sharepoint list...")
+    # Your SharePoint App-Only credentials
+    client_id = config.SHP_CLIENT_ID
+    client_secret = config.SHP_CLIENT_SECRET
+    tenant_id = "2b2830bc-03fb-4ea1-88c2-cb37161501be"
+    resource = f"https://{tenant_id}.sharepoint.com/"
 
-    logger.info("Connecting to the database...")
-    con = duckdb.connect(config.DATABASE)
+    token = config.SHP_TOKEN
 
-    client_credentials = ClientCredential(
-        config.SHP_CLIENT_ID, config.SHP_CLIENT_SECRET
-    )
-    ctx = ClientContext(config.SHAREPOINT_URL).with_credentials(client_credentials)
+    # Get all items from the SharePoint list
+    headers = {
+        "Accept": "application/json;odata=verbose",
+        "Content-Type": "application/json;odata=verbose",
+        "Authorization": f"Bearer {token}",
+    }
+    items_url = f"{site_url}/_api/web/lists/getbytitle('{list_name}')/items"
+    items_r = requests.get(items_url, headers=headers)
+    items = items_r.json()["d"]["results"]
 
-    # sp_site = authenticate(
-    #     config.SHAREPOINT_URL,
-    #     config.SHAREPOINT_SITE,
-    #     config.SHAREPOINT_USERNAME,
-    #     config.SHAREPOINT_PASSWORD,
-    # )
+    # Delete all items from the SharePoint list
+    for item in items:
+        print(item)
+        # delete_url = (
+        #     f"{site_url}/_api/web/lists/getbytitle('{list_name}')/items({item['ID']})"
+        # )
+        # delete_headers = headers.copy()
+        # delete_headers["IF-MATCH"] = "*"
+        # delete_r = requests.delete(delete_url, headers=delete_headers)
 
-    # if sp_site is None:
-    #     logger.info("falhou")
+    # Read the CSV file and add each row as a new item in the SharePoint list
+    data = pd.read_csv("data/all_sales.csv")
+    for index, row in data.iterrows():
+        add_url = f"{site_url}/_api/web/lists/getbytitle('{list_name}')/items"
+        add_data = {
+            "__metadata": {
+                "type": "SP.Data.SalesDataListItem"
+            },  # Replace SalesDataListItem with the correct ListItemEntityTypeFullName for your list
+            # product_id,product_name,product_category,package_qty,sales_qty,product_price,sales_price,category_pct,day_pct,sales_date
+            "Title": str(row["product_id"]),
+            "product_name": row["product_name"],
+            "product_category": row["product_category"],
+            "package_qty": row["package_qty"],
+            "sales_qty": row["sales_qty"],
+            "product_price": row["product_price"],
+            "sales_price": row["sales_price"],
+            "category_pct": row["category_pct"],
+            "day_pct": row["day_pct"],
+            "sales_date": row["sales_date"],
+        }
+        add_r = requests.post(add_url, json=add_data, headers=headers)
+        print(add_r.json())
 
-    web = ctx.web
-    ctx.load(web)
-    ctx.execute_query()
-
-    if ctx:
-        logger.info(f"Loading sales data...")
-        df = con.query(
-            """select  a.product_id, 
-                    coalesce(p.product_name, a.product_name) as product_name,
-                    coalesce(p.product_category, a.product_category) as product_category,
-                    a.package_qty,
-                    a.sales_qty,
-                    a.product_price,
-                    a.sales_price,
-                    a.category_pct,
-                    a.day_pct,
-                    a.sales_date
-            from all_sales a left join product p on a.product_id = p.product_id
-          """
-        ).to_df()
-        logger.info(f" Size of the data: {df.shape}")
-        logger.info(f"Saving data at: {config.PARQUET}")
-        df.to_parquet(config.PARQUET)
-
-        logger.info(f"Loading fuel data...")
-        df2 = con.query(
-            """select  *
-            from all_fuel
-          """
-        ).to_df()
-        logger.info(f" Size of the data: {df2.shape}")
-        logger.info(f"Saving data at: {config.FUEL_PARQUET}")
-        df2.to_parquet(config.FUEL_PARQUET)
-        logger.info("Data dumped.")
-    else:
-        print("erro")
+        if index % 2 == 0:
+            break
