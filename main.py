@@ -13,12 +13,12 @@ app = typer.Typer()
 # define the function for the command line
 @app.command()
 def main(parameters: List[str]):
-    job_name = parameters[0].lower()
-    if job_name in config.JOBS:
-        if len(parameters) > 1:
-            config.JOBS[job_name](config, parameters)
-        else:
+    for parameter in parameters:
+        job_name = parameters.lower()
+        if job_name in config.JOBS:
             config.JOBS[job_name](config, job_name)
+        else:
+            print(f"{job_name} is not a valid job.")
 
 
 # ----------------------------------------------------------------

@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from etl import (
     exceltocsv_run,
     renamefiles_run,
-    exceltodb_run,
+    csvtodb_run,
     allsales_run,
     dbtoparquet_run,
     loadproducts_run,
@@ -57,7 +57,7 @@ TABLE_COLUMNS = {
 JOBS = {
     "exceltocsv": exceltocsv_run,
     "renamefiles": renamefiles_run,
-    "exceltodb": exceltodb_run,
+    "csvtodb": csvtodb_run,
     "allsales": allsales_run,
     "toparquet": dbtoparquet_run,
     "loadproducts": loadproducts_run,
