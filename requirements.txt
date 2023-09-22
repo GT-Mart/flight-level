@@ -8,4 +8,4 @@ pyarrow
 pdfplumber
 supabase
 SQLAlchemy
-psycopg-binary
+psycopg2-binary
