@@ -14,7 +14,7 @@ app = typer.Typer()
 @app.command()
 def main(parameters: List[str]):
     for parameter in parameters:
-        job_name = parameters.lower()
+        job_name = parameter.lower()
         if job_name in config.JOBS:
             config.JOBS[job_name](config, job_name)
         else:

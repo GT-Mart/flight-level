@@ -11,6 +11,7 @@ from etl import (
     loadproducts_run,
     volumes_run,
     tosplist_run,
+    tosupabase_run,
 )
 
 
@@ -63,6 +64,7 @@ JOBS = {
     "loadproducts": loadproducts_run,
     "volumes": volumes_run,
     "tosplist": tosplist_run,
+    "tosupabase": tosupabase_run,
 }
 
 # LOG CONFIGURATION
@@ -101,3 +103,4 @@ SHAREPOINT_PASSWORD = os.getenv("SLDB_SHP_PWD")
 SHP_CLIENT_ID = os.getenv("SLDB_CLIENTID")
 SHP_CLIENT_SECRET = os.getenv("SLDB_CLIENTSECRET")
 SHP_TOKEN = os.getenv("SLDB_TOKEN")
+POSTG_CON = os.getenv("POSTG_CON")
