@@ -56,7 +56,10 @@ def save_to_database(filename, sales_date, db, config):
                 lambda x: x[:-1] if len(x) == 11 or len(x) == 12 else x
             )
 
-            pre_data["product_id"] = pre_data["product_id"].astype(int)
+            try:
+                pre_data["product_id"] = pre_data["product_id"].astype(int)
+            except:
+                pass
 
         logger.info("Saving the data to database...")
         db.sql(f"DROP TABLE IF EXISTS {sql_table};")

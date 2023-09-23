@@ -16,7 +16,9 @@ def main(parameters: List[str]):
     for parameter in parameters:
         job_name = parameter.lower()
         if job_name in config.JOBS:
+            print(f"Starting {job_name}...")
             config.JOBS[job_name](config, job_name)
+            print(f"Finishing {job_name}...")
         else:
             print(f"{job_name} is not a valid job.")
 
