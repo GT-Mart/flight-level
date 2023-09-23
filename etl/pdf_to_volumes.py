@@ -39,7 +39,7 @@ def parse_pdf(config, filename):
     for page in pdf.pages:
         for row in page.extract_text_lines():
             raw_data.append(row)
-
+    pdf.close()
     return raw_data
 
 
