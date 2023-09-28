@@ -54,6 +54,8 @@ def run(config, job_name):
         ).to_df()
         logger.info(f" Size of the data: {df2.shape}")
         logger.info(f"Saving data at Postgres Database...")
-        df.to_sql("all_fuel", my_conn, if_exists="append", index=False, chunksize=10000)
+        df2.to_sql(
+            "all_fuel", my_conn, if_exists="append", index=False, chunksize=10000
+        )
 
     logger.info("Data dumped.")
