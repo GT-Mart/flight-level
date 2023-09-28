@@ -85,18 +85,18 @@ def run(config, job_name):
     logger = get_logger(job_name, config)
 
     logger.info("Starting process to convert excel files to csv...")
-    for file in os.listdir(config.EXCEL_FOLDER):
+    for file in os.listdir(config.PDF_SALES_FOLDER):
         filename, ext = os.path.splitext(file)
         if ext in config.EXCEL_EXTENSIONS:
             logger.info(file)
             sales_date = build_date(filename)
             saveas(
-                os.path.join(config.EXCEL_FOLDER, file),
+                os.path.join(config.PDF_SALES_FOLDER, file),
                 os.path.join(
-                    config.EXCEL_FOLDER,
+                    config.PDF_SALES_FOLDER,
                     f"{sales_date.year}_{sales_date.month}_{sales_date.day}_sales.csv",
                 ),
-                os.path.join(config.EXCEL_ARCHIVE_FOLDER, file),
+                os.path.join(config.PDF_SALES_ARCHIVE_FOLDER, file),
                 columns=config.EXCEL_COLUMNS,
             )
     logger.info("Process completed.")

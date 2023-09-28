@@ -36,15 +36,12 @@ def save_to_database(filename, sales_date, db, config):
     global logger
     prefix = filename.split("_")[3].replace(".csv", "")
     sql_table = f"{prefix}_{sales_date.strftime('%Y%m%d')}"
-    col_map = config.COL_MAP
     fields = config.TABLE_COLUMNS[prefix]
 
     try:
         logger.info("Loading the file...")
         pre_data = pd.read_csv(filename)
         if prefix == "sales":
-            pre_data["sales_date"] = sales_date
-            pre_data.rename(columns=col_map, inplace=True)
             pre_data.dropna(subset=["product_id"], inplace=True)
             pre_data["product_id"] = pre_data["product_id"].astype(str)
             pre_data["product_id"] = pre_data["product_id"].str.replace(".0", "")
@@ -94,13 +91,11 @@ def run(config, job_name):
     logger.info("Connecting to the database...")
     con = duckdb.connect(config.DATABASE)
 
-    logger.info(
-        f"Processing available csv files on the folder {config.EXCEL_FOLDER}..."
-    )
+    logger.info(f"Processing available csv files on the folder {config.CSV_FOLDER}...")
 
-    for file in os.listdir(config.EXCEL_FOLDER):
+    for file in os.listdir(config.CSV_FOLDER):
         filename, ext = os.path.splitext(file)
-        csvfilename = os.path.join(config.EXCEL_FOLDER, file)
+        csvfilename = os.path.join(config.CSV_FOLDER, file)
         archivecsvfilename = os.path.join(config.CSV_ARCHIVE_FOLDER, file)
 
         if ext in config.CSV_EXTENSIONS:

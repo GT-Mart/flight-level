@@ -3,33 +3,36 @@ import os
 from dotenv import load_dotenv
 
 from etl import (
-    exceltocsv_run,
+    salestocsv_run,
     renamefiles_run,
     csvtodb_run,
     allsales_run,
     dbtoparquet_run,
     loadproducts_run,
-    volumes_run,
+    fueltocsv_run,
     tosplist_run,
     tosupabase_run,
+    exceltocsv_run,
 )
 
 
 load_dotenv()
 
 # EXCEL TO DB
-EXCEL_FOLDER = os.getenv("SLDB_EXCEL_FOLDER")
-EXCEL_ARCHIVE_FOLDER = os.getenv("SLDB_EXCEL_ARCHIVE_FOLDER")
+PDF_SALES_FOLDER = os.getenv("SLDB_PDF_SALES_FOLDER")
+PDF_SALES_ARCHIVE_FOLDER = os.getenv("SLDB_PDF_SALES_ARCHIVE_FOLDER")
+PDF_SALES_REGEX = r"([0-9]+)\s([0-9]{1})\s(.+)\s(Grocery No Tax|Lottery|Grocery Tax|Beer|Scratch Sales|Automotive|Candy \/ Gum|Cigarette Carton|Cigarette Pack|Moist Tabacco|Liquor|Wine)\s([0-9]+)\s([$0-9.]+)\s([$0-9.]+)\s([0-9.%]+)\s([0-9.%]+)"
+CSV_FOLDER = "data"
 CSV_ARCHIVE_FOLDER = os.getenv("SLDB_CSV_ARCHIVE_FOLDER")
 EXCEL_EXTENSIONS = eval(os.getenv("SLDB_EXCEL_EXTENSIONS"))
 CSV_EXTENSIONS = eval(os.getenv("SLDB_CSV_EXTENSIONS"))
 EXCEL_SHEET = os.getenv("SLDB_EXCEL_SHEET")
 
 
-PDF_FOLDER = "data"
-PDF_ARCHIVE_FOLDER = "data/fuel_archive"
+PDF_FUEL_FOLDER = "data/fuel"
+PDF_FUEL_ARCHIVE_FOLDER = "data/fuel_archive"
 PDF_EXTENSIONS = [".pdf"]
-PDF_REGEX = r"(\w+)\s(\$\s\S+)\s(\$\s\S+)\s(\$\s\S+)\s(\$\s\S+)\s(\$\s\S+)\s(\$\s\S+)\s(\$\s\S+)"
+PDF_FUEL_REGEX = r"(\w+)\s(\$\s\S+)\s(\$\s\S+)\s(\$\s\S+)\s(\$\s\S+)\s(\$\s\S+)\s(\$\s\S+)\s(\$\s\S+)"
 PDF_PUMP_IDENTIFIER = "Dispenser"
 PDF_FUEL_TYPES = ["unleaded", "Premium", "Diesel"]
 
@@ -56,13 +59,14 @@ TABLE_COLUMNS = {
 
 # JOBS CONFIGURATION
 JOBS = {
+    "salestocsv": salestocsv_run,
     "exceltocsv": exceltocsv_run,
     "renamefiles": renamefiles_run,
     "csvtodb": csvtodb_run,
     "allsales": allsales_run,
     "toparquet": dbtoparquet_run,
     "loadproducts": loadproducts_run,
-    "volumes": volumes_run,
+    "fueltocsv": fueltocsv_run,
     "tosplist": tosplist_run,
     "tosupabase": tosupabase_run,
 }

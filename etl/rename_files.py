@@ -2,9 +2,8 @@
 import os
 
 
-def run(config, job_name):
-    i = 0
-    for file in os.listdir(config.EXCEL_FOLDER):
+def rename(config, folder):
+    for file in os.listdir(folder):
         _, ext = os.path.splitext(file)
         newfilename = None
         if ext in config.EXCEL_EXTENSIONS:
@@ -17,10 +16,15 @@ def run(config, job_name):
         elif ext in config.PDF_EXTENSIONS:
             prefix, sales_date, hour = file.split(" ")
             sales_year, sales_month, sales_day = sales_date.split("-")
-            newfilename = f"Fuel_Sales_{sales_year}_{sales_day}_{sales_month}{ext}"
+            newfilename = f"{prefix}_{sales_year}_{sales_day}_{sales_month}{ext}"
 
         if newfilename:
             os.rename(
-                os.path.join(config.EXCEL_FOLDER, file),
-                os.path.join(config.EXCEL_FOLDER, newfilename),
+                os.path.join(folder, file),
+                os.path.join(folder, newfilename),
             )
+
+
+def run(config, job_name):
+    rename(config, config.PDF_SALES_FOLDER)
+    rename(config, config.PDF_FUEL_FOLDER)
