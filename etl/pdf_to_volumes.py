@@ -15,16 +15,16 @@ def build_date(filename):
     global logger
     name_parts = filename.split("_")
     if len(name_parts) >= 4:
-        sales_year = int(name_parts[2])
-        sales_day = int(name_parts[3])
-        sales_month = int(name_parts[4])
+        sales_year = int(name_parts[1])
+        sales_day = int(name_parts[2])
+        sales_month = int(name_parts[3])
 
         if sales_month > 12:
-            sales_day = int(name_parts[4])
-            sales_month = int(name_parts[3])
+            sales_day = int(name_parts[3])
+            sales_month = int(name_parts[2])
 
         if sales_day > 31:
-            sales_day = int(name_parts[3][0:2])
+            sales_day = int(name_parts[2][0:2])
     else:
         logger.info("filename is not formatted correctly")
         return None

@@ -14,9 +14,12 @@ def rename(config, folder):
                 .replace("2202", "2022")
             )
         elif ext in config.PDF_EXTENSIONS:
-            prefix, sales_date, hour = file.split(" ")
-            sales_year, sales_month, sales_day = sales_date.split("-")
-            newfilename = f"{prefix}_{sales_year}_{sales_day}_{sales_month}{ext}"
+            try:
+                prefix, sales_date, hour = file.split(" ")
+                sales_year, sales_month, sales_day = sales_date.split("-")
+                newfilename = f"{prefix}_{sales_year}_{sales_day}_{sales_month}{ext}"
+            except:
+                newfilename = None
 
         if newfilename:
             os.rename(
