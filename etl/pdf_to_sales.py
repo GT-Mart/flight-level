@@ -74,6 +74,7 @@ def parse(config, file, sales_date):
                                 data[len(data) - 1]["product_name"] += (
                                     " " + item["text"]
                                 )
+    pdf.close()
     return data
 
 
