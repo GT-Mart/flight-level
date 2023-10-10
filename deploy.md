@@ -61,4 +61,28 @@ POSTG_CON = "postgresql+psycopg2://postgres:<supabase db password>@<supabase db 
 
 6) Copy the content of the `dash` folder Into the OneDrive folder called `Dash Board`
 
-7) Inside the `Projects` folder create one .bat file for each script
+7) Inside the `Projects` folder create one .cmd file for each script:
+
+- run_renamefiles.cmd
+  ```cmd
+  cd scripts
+  python main.py renamefiles
+  ```
+
+- run_export_to_csv.cmd
+  ```cmd
+  cd scripts
+  python main.py salestocsv fueltocsv
+  ```
+
+- run_import_to_db.cmd
+  ```cmd
+  cd scripts
+  python main.py csvtodb allsales
+  ```
+
+- run_to_supabase.cmd
+  ```cmd
+  cd scripts
+  python main.py tosupabase
+  ```
