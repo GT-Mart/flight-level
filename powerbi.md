@@ -24,3 +24,8 @@ The GTMartData connects to the database through an API Gateway. Below are the li
 
 Both depend on the APIKEY, that will be provided in a separate email.
 
+If you want to test the API Gateway, use the link:
+
+`https://pbi-dt-bdg-277fd582e765.herokuapp.com/docs`
+
+
