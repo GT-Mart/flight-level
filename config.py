@@ -27,7 +27,20 @@ CSV_ARCHIVE_FOLDER = os.getenv("SLDB_CSV_ARCHIVE_FOLDER")
 EXCEL_EXTENSIONS = eval(os.getenv("SLDB_EXCEL_EXTENSIONS"))
 CSV_EXTENSIONS = eval(os.getenv("SLDB_CSV_EXTENSIONS"))
 EXCEL_SHEET = os.getenv("SLDB_EXCEL_SHEET")
-
+MONTH_MAP = {
+    "Jan": "01",
+    "Feb": "02",
+    "Mar": "03",
+    "Apr": "04",
+    "May": "05",
+    "Jun": "06",
+    "Jul": "07",
+    "Aug": "08",
+    "Sep": "09",
+    "Oct": "10",
+    "Nov": "11",
+    "Dec": "12",
+}
 
 PDF_FUEL_FOLDER = "data/fuel"
 PDF_FUEL_ARCHIVE_FOLDER = "data/fuel_archive"
