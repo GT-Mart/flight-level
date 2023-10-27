@@ -31,7 +31,8 @@ def run(config, job_name):
                    a.sales_price,
                    a.category_pct,
                    a.day_pct,
-                   a.sales_date
+                   a.sales_date,
+                   a.page
            from all_sales a left join product p on a.product_id = p.product_id
         """
     ).to_df()
