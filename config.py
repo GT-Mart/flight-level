@@ -109,6 +109,9 @@ PROD_COL_MAP = {
 PROD_RAW_TABLE = "raw_product"
 PROD_TABLE = "product"
 ALLSALES_COLUMNS = eval(os.getenv("SLDB_ALLSALES_TABLE_COLUMNS"))
+ALLFUEL_COLUMNS = "dispenser,sales_date,fuel_type,fuel_sales,fuel_sales_discount,fuel_sales_paid,fuel_volume".split(
+    ","
+)
 
 
 SHAREPOINT_URL = "https://gtmart234.sharepoint.com"

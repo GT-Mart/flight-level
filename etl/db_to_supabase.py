@@ -49,7 +49,14 @@ def run(config, job_name):
 
         logger.info(f"Loading fuel data...")
         df2 = con.query(
-            """select  *
+            """select dispenser,
+                      sales_date,
+                      fuel_type,
+                      fuel_sales,
+                      fuel_sales_discount,
+                      fuel_sales_paid,
+                      fuel_volume,
+                      page
                from all_fuel
             """
         ).to_df()
