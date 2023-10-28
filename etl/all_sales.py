@@ -44,8 +44,8 @@ def create_all_sales_table(first_year, db, logger, fields):
     db.sql("CREATE SEQUENCE serial START WITH 1 INCREMENT BY 1;")
 
     logger.info("Setting the page numbers...")
-    db.sql("UPDATE all_sales SET id = nextval('serial')")
-    db.sql("UPDATE all_sales SET page = (id - 1) / 1000 + 1")
+    db.sql("UPDATE all_sales SET id = nextval('serial');")
+    db.sql("UPDATE all_sales SET page = (id - 1) // 1000 + 1;")
 
     logger.info("Table created.")
 
@@ -93,8 +93,8 @@ def create_all_fuel_table(first_year, db, logger, fields):
     db.sql("CREATE SEQUENCE serial START WITH 1 INCREMENT BY 1;")
 
     logger.info("Setting the page numbers...")
-    db.sql("UPDATE all_fuel SET id = nextval('serial')")
-    db.sql("UPDATE all_fuel SET page = (id - 1) / 1000 + 1")
+    db.sql("UPDATE all_fuel SET id = nextval('serial');")
+    db.sql("UPDATE all_fuel SET page = (id - 1) // 1000 + 1;")
 
     logger.info("Table created.")
 
