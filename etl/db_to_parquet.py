@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
+import os
 import duckdb
 import pandas as pd
 
 from .log import get_logger
+
+from supabase import create_client, Client
+
 
 logger = None
 
@@ -13,6 +17,9 @@ def run(config, job_name):
     logger = get_logger(job_name, config)
 
     logger.info("Migrating data to parquet format...")
+    url = config.SUPABASE_URL
+    apk = config.SUPABASE_KEY
+    supabase: Client = create_client(url, apk)
 
     logger.info("Connecting to the database...")
     con = duckdb.connect(config.DATABASE)
@@ -33,10 +40,17 @@ def run(config, job_name):
            from all_sales a left join product p on a.product_id = p.product_id
         """
     ).to_df()
+
     logger.info(f" Size of the data: {df.shape}")
     logger.info(f"Saving data at: {config.PARQUET}")
     df.to_parquet(config.PARQUET)
-    # df.to_csv(config.CSV)
+
+    with open(config.PARQUET, "rb") as f:
+        supabase.storage.from_(config.SUPABASE_BUCKET).upload(
+            file=f,
+            path="all_sales.parquet",
+            file_options={"content-type": "application/x-parquet"},
+        )
 
     logger.info(f"Loading fuel data...")
     df2 = con.query(
@@ -51,8 +65,15 @@ def run(config, job_name):
                from all_fuel
             """
     ).to_df()
+
     logger.info(f" Size of the data: {df2.shape}")
     logger.info(f"Saving data at: {config.FUEL_PARQUET}")
     df2.to_parquet(config.FUEL_PARQUET)
-    # df2.to_csv(config.FUEL_CSV)
+
+    with open(config.FUEL_PARQUET, "rb") as f:
+        supabase.storage.from_(config.SUPABASE_BUCKET).upload(
+            file=f,
+            path="all_fuel.parquet",
+            file_options={"content-type": "application/x-parquet"},
+        )
     logger.info("Data dumped.")
