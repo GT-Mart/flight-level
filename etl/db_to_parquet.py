@@ -49,7 +49,7 @@ def run(config, job_name):
         supabase.storage.from_(config.SUPABASE_BUCKET).upload(
             file=f,
             path="all_sales.parquet",
-            file_options={"content-type": "application/x-parquet"},
+            file_options={"content-type": "application/x-parquet", "x-upsert": "true"},
         )
 
     logger.info(f"Loading fuel data...")
@@ -74,6 +74,6 @@ def run(config, job_name):
         supabase.storage.from_(config.SUPABASE_BUCKET).upload(
             file=f,
             path="all_fuel.parquet",
-            file_options={"content-type": "application/x-parquet"},
+            file_options={"content-type": "application/x-parquet", "x-upsert": "true"},
         )
     logger.info("Data dumped.")
